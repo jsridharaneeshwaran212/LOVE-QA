@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Expense Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f4f7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .total {
+            text-align: center;
+        }
+
+        .total h2 {
+            margin-top: 10px;
+            font-size: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #222;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #f7f7f7;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .delete {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>💰 Expense Tracker</h1>
+
+    <div class="card total">
+        <p>Total Expenses</p>
+        <h2>₹<span id="total">0</span></h2>
+    </div>
+
+    <div class="card">
+
+        <input
+            type="text"
+            id="expenseName"
+            placeholder="Expense name"
+        >
+
+        <input
+            type="number"
+            id="expenseAmount"
+            placeholder="Amount ₹"
+        >
+
+        <button onclick="addExpense()">
+            + Add Expense
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Recent Expenses</h3>
+
+        <br>
+
+        <ul id="expenseList"></ul>
+
+    </div>
+
+</div>
+
+<script>
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+function displayExpenses() {
+
+    let list = document.getElementById("expenseList");
+    list.innerHTML = "";
+
+    let total = 0;
+
+    expenses.forEach((expense, index) => {
+
+        total += expense.amount;
+
+        let item = document.createElement("li");
+
+        item.innerHTML = `
+            <span>${expense.name} - ₹${expense.amount}</span>
+
+            <span class="delete"
+            onclick="deleteExpense(${index})">
+            ✕
+            </span>
+        `;
+
+        list.appendChild(item);
+    });
+
+    document.getElementById("total").innerText = total;
+}
+
+
+function addExpense() {
+
+    let name =
+        document.getElementById("expenseName").value;
+
+    let amount =
+        Number(document.getElementById("expenseAmount").value);
+
+    if (name === "" || amount <= 0) {
+
+        alert("Please enter valid details!");
+
+        return;
+    }
+
+    expenses.push({
+        name: name,
+        amount: amount
+    });
+
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
+
+    document.getElementById("expenseName").value = "";
+
+    document.getElementById("expenseAmount").value = "";
+
+    displayExpenses();
+}
+
+
+function deleteExpense(index) {
+
+    expenses.splice(index, 1);
+
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
+
+    displayExpenses();
+}
+
+
+displayExpenses();
+    </script>
+
+</body>
+</html>
